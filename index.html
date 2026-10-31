@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study Library</title>
+<meta name="description" content="A library of single-file study guides: power systems, substations, the WESM market, AI agents, AI literacy and an offline encyclopedia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237aa2ff'/%3E%3Cpath d='M7 9h6v14H7zM14 9h5v14h-5zM20 11l5 1-3 12-5-1z' fill='%230f1218'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#0f1218;--surface:#171c26;--fg:#eef1f7;--muted:#9aa5b8;--line:#2a3344;--accent:#7aa2ff;--top:#0a0d13;color-scheme:dark}
+:root[data-theme="light"]{--bg:#f4f6fb;--surface:#fff;--fg:#141a26;--muted:#5b667a;--line:#dde3ee;--accent:#2f5fd8;--top:#16203a;color-scheme:light}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f6fb;--surface:#fff;--fg:#141a26;--muted:#5b667a;--line:#dde3ee;--accent:#2f5fd8;--top:#16203a;color-scheme:light}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:56px}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--top);color:#fff;z-index:10}
+.brand{font-weight:700;display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+.logo{width:30px;height:30px;border-radius:8px;background:#7aa2ff;display:grid;place-items:center;color:#0f1218;font-size:15px}
+.top input{margin-left:auto;flex:1;max-width:340px;padding:8px 12px;border-radius:9px;border:1px solid #ffffff2e;background:#ffffff14;color:#fff;font:inherit;font-size:14px}
+.top input::placeholder{color:#ffffffa6}
+.btn{border:1px solid #ffffff33;background:#ffffff14;color:#fff;border-radius:9px;padding:7px 11px;font:inherit;font-size:14px;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{max-width:1060px;margin:0 auto;padding:36px 18px 60px}
+.kicker{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:10px 0 10px}
+.sub{color:var(--muted);max-width:62ch;margin:0 0 22px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0f1218;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{--c:var(--accent);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:14px;padding:18px;text-decoration:none;color:var(--fg);transition:transform .15s,border-color .15s,box-shadow .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 10px 28px #0005}
+.meta{display:flex;justify-content:space-between;gap:8px;font:12px/1.2 ui-monospace,monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.meta b{color:var(--c)}
+.card h2{font-size:19px;line-height:1.3;margin:10px 0 6px}
+.card p{margin:0 0 14px;color:var(--muted);font-size:14.5px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tags span{font-size:12px;padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--fg)}
+.go{font-weight:600;color:var(--c)}
+.empty{display:none;color:var(--muted);text-align:center;padding:40px 0}
+.path{margin-top:36px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:18px 20px}
+.path h3{margin:0 0 8px;font-size:17px}.path ol{margin:0;padding-left:20px;color:var(--muted)}.path li{margin:4px 0}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40px}
+@media(max-width:560px){.top input{max-width:none}.brand span{display:none}}
+.jump{display:flex;gap:10px;margin:0 0 26px}.jump a{border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;border-radius:999px;padding:6px 16px;font-size:14px}.jump a:hover{border-color:var(--accent)}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 12px;scroll-margin-top:70px}.sechead h2{margin:0;font-size:24px}.sechead span{color:var(--muted);font-size:14px}
+.secsub{margin:0 0 16px;color:var(--muted)}
+.toolsec{margin-top:44px;padding:22px;border:1px dashed var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface) 55%,transparent)}
+#guides,#tools{scroll-margin-top:70px}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#"><span class="logo">&#128218;</span><span>Study Library</span></a>
+  <input id="q" type="search" placeholder="Search guides and tools…  ( / )" aria-label="Search guides">
+  <button class="btn" id="theme" type="button" aria-label="Toggle theme">&#9680;</button>
+</header>
+<main>
+  <div class="kicker">Study guides and tools</div>
+  <h1>Your Study Library and Tools</h1>
+  <p class="sub">Six study guides on power systems, substations, the Philippine electricity market, AI and a general encyclopedia, plus three browser tools for CAD drawings, PDFs and Microsoft Project files. Everything opens in its own tab.</p>
+  <nav class="jump"><a href="#guides">Study guides</a><a href="#tools">Tools</a></nav>
+  <section id="guides">
+    <div class="sechead"><h2>Study guides</h2><span id="gcount"></span></div>
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="gempty">No study guides match.</p>
+  </section>
+  <section id="tools" class="toolsec">
+    <div class="sechead"><h2>Tools</h2><span id="tcount"></span></div>
+    <p class="secsub">Small apps that run in your browser. They open in their own tab.</p>
+    <div class="grid" id="tgrid"></div>
+    <p class="empty" id="tempty">No tools match.</p>
+  </section>
+  <section class="path">
+    <h3>Suggested reading paths</h3>
+    <ol>
+      <li><b>Power engineering:</b> Electrical Engineer's Encyclopedia, then the Substation Engineering Handbook.</li>
+      <li><b>Market operations:</b> Encyclopedia chapters 6 and 12, then the WESM Trading Handbook.</li>
+      <li><b>AI for trading ops:</b> AI Literacy Lab, then Building AI Agents That Do Real Work.</li>
+    </ol>
+  </section>
+</main>
+<footer>Add a guide or tool by adding one entry to the <code>guides</code> list in this file's script.</footer>
+<script>
+var guides=[
+{t:"The Electrical Engineer’s Encyclopedia",u:"https://jdjtan01.github.io/electrical-engineering-study-guide/",c:"#ff9a4d",g:"Power",n:"17 chapters",d:"Plain-English web book on circuits, machines, power systems, protection, electronics, control, safety and trivia, with diagrams and worked examples.",tags:["Fundamentals","Diagrams","Quiz"]},
+{t:"Substation Engineering Handbook",u:"https://jdjtan01.github.io/substation-study-guide/",c:"#f2c14e",g:"Power",n:"20 chapters",d:"Types, bus schemes, transformers, switchgear, protection, automation, grounding, design, testing, maintenance and safety.",tags:["Substations","Photos","Worked examples"]},
+{t:"WESM Trading & Market Operations Handbook",u:"https://jdjtan01.github.io/wesm-handbook/",c:"#5fd68a",g:"Markets",n:"18 chapters",d:"The Philippine spot market: design, pricing, reserves, battery storage, settlement and the 2025–2026 market update.",tags:["Trading","Pricing","Settlement"]},
+{t:"Building AI Agents That Do Real Work",u:"https://jdjtan01.github.io/ai-agents-handbook/",c:"#8f7bff",g:"AI",n:"18 chapters",d:"Design, secure and deploy AI workflows and agents for office and trading-ops work: patterns, MCP, evals, cost and an Apps Script example.",tags:["Agents","MCP","Apps Script"]},
+{t:"AI Literacy Lab",u:"https://jdjtan01.github.io/ai-literacy-lab/",c:"#4fc3f7",g:"AI",n:"12-week course",d:"AI literacy and prompt engineering taught as a 12-week course.",tags:["Course","Prompting"]},
+{t:"Encyclopedia Premium",u:"https://jdjtan01.github.io/encyclopediaPremium/",c:"#d9b26f",g:"Reference",n:"Encyclopedia",d:"An offline-friendly, Encarta-style encyclopedia with articles, an atlas, a timeline, quizzes and a dictionary.",tags:["Atlas","Timeline","Dictionary"]},
+{t:"CAD Viewer",u:"https://jdjtan01.github.io/CADViewer/",c:"#5fc7b8",g:"Tools",n:"Browser tool",d:"Open DWG and DXF drawings in the browser, measure distance, area and angle, and export PDF or PNG. Files never leave your computer.",tags:["DWG / DXF","Measure","PDF export"]},
+{t:"Pagewright",u:"https://jdjtan01.github.io/pagewrite/",c:"#ff8fc7",g:"Tools",n:"Browser tool",d:"Build and edit PDFs: add blank pages, PDFs or images, rotate, delete or extract pages, add a signature, then export.",tags:["PDF","Sign","Reorder pages"]},
+{t:"Project Viewer",u:"https://jdjtan01.github.io/ProjectViewer/",c:"#ff7a7a",g:"Tools",n:"Browser tool",d:"Open Microsoft Project (.mpp or XML) files to see tasks, timeline and dependencies without Project, filter critical tasks and export to Excel.",tags:["MS Project","Gantt","Excel export"]}
+];
+var cat="All",grid=document.getElementById("grid"),tgrid=document.getElementById("tgrid"),q=document.getElementById("q");
+var cats=["All"].concat(guides.filter(function(x){return x.g!=="Tools"}).map(function(x){return x.g}).filter(function(v,i,a){return a.indexOf(v)===i}));
+var chips=document.getElementById("chips");
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+cats.forEach(function(c){var b=document.createElement("button");b.className="chip";b.type="button";b.textContent=c;b.setAttribute("aria-pressed",c===cat);b.onclick=function(){cat=c;[].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed",x.textContent===cat)});render()};chips.appendChild(b)});
+function card(x){return '<a class="card" style="--c:'+x.c+'" href="'+x.u+'" target="_blank" rel="noopener"><div class="meta"><b>'+esc(x.g)+'</b><span>'+esc(x.n)+'</span></div><h2>'+esc(x.t)+'</h2><p>'+esc(x.d)+'</p><div class="tags">'+x.tags.map(function(t){return "<span>"+esc(t)+"</span>"}).join("")+'</div><span class="go">Open '+(x.g==="Tools"?"tool":"guide")+' &rarr;</span></a>'}
+function render(){
+  var s=q.value.trim().toLowerCase();
+  function hit(x){return !s||(x.t+" "+x.d+" "+x.tags.join(" ")+" "+x.g).toLowerCase().indexOf(s)>-1}
+  var g=guides.filter(function(x){return x.g!=="Tools"&&(cat==="All"||x.g===cat)&&hit(x)});
+  var t=guides.filter(function(x){return x.g==="Tools"&&hit(x)});
+  grid.innerHTML=g.map(card).join("");tgrid.innerHTML=t.map(card).join("");
+  document.getElementById("gcount").textContent=g.length+(g.length===1?" guide":" guides");
+  document.getElementById("tcount").textContent=t.length+(t.length===1?" tool":" tools");
+  document.getElementById("gempty").style.display=g.length?"none":"block";
+  document.getElementById("tempty").style.display=t.length?"none":"block";
+}
+q.addEventListener("input",render);
+document.addEventListener("keydown",function(e){if(e.key==="/"&&document.activeElement!==q){e.preventDefault();q.focus()}});
+document.getElementById("theme").onclick=function(){
+  var r=document.documentElement,cur=r.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"),nx=cur==="dark"?"light":"dark";
+  r.setAttribute("data-theme",nx);try{localStorage.setItem("lib-theme",nx)}catch(e){}
+};
+try{var t=localStorage.getItem("lib-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}
+render();
+</script>
+</body>
+</html>
