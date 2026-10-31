@@ -45,7 +45,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
 .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 12px;scroll-margin-top:70px}.sechead h2{margin:0;font-size:24px}.sechead span{color:var(--muted);font-size:14px}
 .secsub{margin:0 0 16px;color:var(--muted)}
 .toolsec{margin-top:44px;padding:22px;border:1px dashed var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface) 55%,transparent)}
-#guides,#tools{scroll-margin-top:70px}
+#readings,#guides,#tools{scroll-margin-top:70px}
 .hact{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.hact .chip{padding:4px 12px;font-size:13px}
 .hint{margin:0 0 12px;color:var(--accent);font-size:14px}
 .card.editing{cursor:grab;border-style:dashed;border-top-style:solid}.card.editing:active{cursor:grabbing}.card.dragging{opacity:.4}.card.over{outline:2px dashed var(--c);outline-offset:3px}
@@ -72,13 +72,20 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
 <main>
   <div class="kicker">Study guides and tools</div>
   <h1>Your Study Library and Tools</h1>
-  <p class="sub">Six study guides on power systems, substations, the Philippine electricity market, AI and a general encyclopedia, plus three browser tools for CAD drawings, PDFs and Microsoft Project files. Everything opens in its own tab.</p>
+  <p class="sub">Two encyclopedias to read, study guides on substations, the fire code, the Philippine electricity market and AI, plus three browser tools for CAD drawings, PDFs and Microsoft Project files. Everything opens in its own tab.</p>
   <div class="resume" id="resume" hidden>
     <div class="rtxt"><span class="rlabel">Continue where you left off</span><strong id="rtitle"></strong><span class="rmeta" id="rmeta"></span></div>
     <div class="ract"><a class="rbtn" id="rgo" href="#" target="_blank" rel="noopener">Resume &rarr;</a><button class="rclear" id="rclear" type="button" aria-label="Clear last opened" title="Clear">&times;</button></div>
   </div>
-  <nav class="jump"><a href="#guides">Study guides</a><a href="#tools">Tools</a></nav>
-  <section id="guides">
+  <nav class="jump"><a href="#readings">Readings</a><a href="#guides">Study guides</a><a href="#tools">Tools</a></nav>
+  <section id="readings">
+    <div class="sechead"><h2>Readings</h2><span class="hact"><span id="rcount"></span><button class="chip" type="button" data-edit="readings">Rearrange</button><button class="chip" type="button" data-reset="readings" hidden>Reset order</button></span></div>
+    <p class="hint" id="hint-readings" hidden>Drag cards to reorder, or use the arrows. Saved in this browser.</p>
+    <p class="secsub">Encyclopedias and general reading.</p>
+    <div class="grid" id="rgrid"></div>
+    <p class="empty" id="rempty">No readings match.</p>
+  </section>
+  <section id="guides" style="margin-top:44px">
     <div class="sechead"><h2>Study guides</h2><span class="hact"><span id="gcount"></span><button class="chip" type="button" data-edit="guides">Rearrange</button><button class="chip" type="button" data-reset="guides" hidden>Reset order</button></span></div>
     <p class="hint" id="hint-guides" hidden>Drag cards to reorder, or use the arrows. Saved in this browser.</p>
     <div class="chips" id="chips"></div>
@@ -96,6 +103,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
     <h3>Suggested reading paths</h3>
     <ol>
       <li><b>Power engineering:</b> Electrical Engineer's Encyclopedia, then the Substation Engineering Handbook.</li>
+      <li><b>Building safety:</b> Encyclopedia chapter 11 (safety and codes), then the RIRR Fire Protection Reviewer.</li>
       <li><b>Market operations:</b> Encyclopedia chapters 6 and 12, then the WESM Trading Handbook.</li>
       <li><b>AI for trading ops:</b> AI Literacy Lab, then Building AI Agents That Do Real Work.</li>
     </ol>
@@ -104,42 +112,46 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
 <footer>New guides and tools: add one entry to the <code>guides</code> list in this file's script (use <code>g:"Tools"</code> for tools). Anything new appears at the end of its section until you rearrange it.</footer>
 <script>
 var guides=[
-{t:"The Electrical Engineer’s Encyclopedia",u:"https://jdjtan01.github.io/electrical-engineering-study-guide/",c:"#ff9a4d",g:"Power",n:"17 chapters",d:"Plain-English web book on circuits, machines, power systems, protection, electronics, control, safety and trivia, with diagrams and worked examples.",tags:["Fundamentals","Diagrams","Quiz"]},
+{t:"The Electrical Engineer’s Encyclopedia",u:"https://jdjtan01.github.io/electrical-engineering-study-guide/",c:"#ff9a4d",g:"Readings",n:"17 chapters",d:"Plain-English web book on circuits, machines, power systems, protection, electronics, control, safety and trivia, with diagrams and worked examples.",tags:["Fundamentals","Diagrams","Quiz"]},
 {t:"Substation Engineering Handbook",u:"https://jdjtan01.github.io/substation-study-guide/",c:"#f2c14e",g:"Power",n:"20 chapters",d:"Types, bus schemes, transformers, switchgear, protection, automation, grounding, design, testing, maintenance and safety.",tags:["Substations","Photos","Worked examples"]},
+{t:"RIRR Fire Protection Reviewer",u:"https://jdjtan01.github.io/ra9514-fire-code-study-guide/",c:"#e5484d",g:"Codes",n:"17 sections",d:"RA 9514 and its 2019 Revised IRR with in-depth fire detection and alarm (FDAS) and suppression requirements, design methods, calculators and a self-test.",tags:["RA 9514","FDAS","Calculators"]},
 {t:"WESM Trading & Market Operations Handbook",u:"https://jdjtan01.github.io/wesm-handbook/",c:"#5fd68a",g:"Markets",n:"18 chapters",d:"The Philippine spot market: design, pricing, reserves, battery storage, settlement and the 2025–2026 market update.",tags:["Trading","Pricing","Settlement"]},
 {t:"Building AI Agents That Do Real Work",u:"https://jdjtan01.github.io/ai-agents-handbook/",c:"#8f7bff",g:"AI",n:"18 chapters",d:"Design, secure and deploy AI workflows and agents for office and trading-ops work: patterns, MCP, evals, cost and an Apps Script example.",tags:["Agents","MCP","Apps Script"]},
 {t:"AI Literacy Lab",u:"https://jdjtan01.github.io/ai-literacy-lab/",c:"#4fc3f7",g:"AI",n:"12-week course",d:"AI literacy and prompt engineering taught as a 12-week course.",tags:["Course","Prompting"]},
-{t:"Encyclopedia Premium",u:"https://jdjtan01.github.io/encyclopediaPremium/",c:"#d9b26f",g:"Reference",n:"Encyclopedia",d:"An offline-friendly, Encarta-style encyclopedia with articles, an atlas, a timeline, quizzes and a dictionary.",tags:["Atlas","Timeline","Dictionary"]},
+{t:"Encyclopedia Premium",u:"https://jdjtan01.github.io/encyclopediaPremium/",c:"#d9b26f",g:"Readings",n:"Encyclopedia",d:"An offline-friendly, Encarta-style encyclopedia with articles, an atlas, a timeline, quizzes and a dictionary.",tags:["Atlas","Timeline","Dictionary"]},
 {t:"CAD Viewer",u:"https://jdjtan01.github.io/CADViewer/",c:"#5fc7b8",g:"Tools",n:"Browser tool",d:"Open DWG and DXF drawings in the browser, measure distance, area and angle, and export PDF or PNG. Files never leave your computer.",tags:["DWG / DXF","Measure","PDF export"]},
 {t:"Pagewright",u:"https://jdjtan01.github.io/pagewrite/",c:"#ff8fc7",g:"Tools",n:"Browser tool",d:"Build and edit PDFs: add blank pages, PDFs or images, rotate, delete or extract pages, add a signature, then export.",tags:["PDF","Sign","Reorder pages"]},
 {t:"Project Viewer",u:"https://jdjtan01.github.io/ProjectViewer/",c:"#ff7a7a",g:"Tools",n:"Browser tool",d:"Open Microsoft Project (.mpp or XML) files to see tasks, timeline and dependencies without Project, filter critical tasks and export to Excel.",tags:["MS Project","Gantt","Excel export"]}
 ];
-var cat="All",grid=document.getElementById("grid"),tgrid=document.getElementById("tgrid"),q=document.getElementById("q");
-var cats=["All"].concat(guides.filter(function(x){return x.g!=="Tools"}).map(function(x){return x.g}).filter(function(v,i,a){return a.indexOf(v)===i}));
+var cat="All",grid=document.getElementById("grid"),tgrid=document.getElementById("tgrid"),rgrid=document.getElementById("rgrid"),q=document.getElementById("q");
+var cats=["All"].concat(guides.filter(function(x){return x.g!=="Tools"&&x.g!=="Readings"}).map(function(x){return x.g}).filter(function(v,i,a){return a.indexOf(v)===i}));
 var chips=document.getElementById("chips");
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 cats.forEach(function(c){var b=document.createElement("button");b.className="chip";b.type="button";b.textContent=c;b.setAttribute("aria-pressed",c===cat);b.onclick=function(){cat=c;[].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed",x.textContent===cat)});render()};chips.appendChild(b)});
-var ed={guides:false,tools:false},orders={guides:[],tools:[]};
-try{["guides","tools"].forEach(function(k){var v=JSON.parse(localStorage.getItem("lib-order-"+k)||"[]");if(Array.isArray(v))orders[k]=v})}catch(e){}
-function keyOf(x){return x.g==="Tools"?"tools":"guides"}
+var ed={readings:false,guides:false,tools:false},orders={readings:[],guides:[],tools:[]};
+try{["readings","guides","tools"].forEach(function(k){var v=JSON.parse(localStorage.getItem("lib-order-"+k)||"[]");if(Array.isArray(v))orders[k]=v})}catch(e){}
+function keyOf(x){return x.g==="Tools"?"tools":x.g==="Readings"?"readings":"guides"}
 function ordered(k){var base=guides.filter(function(x){return keyOf(x)===k});
   return base.map(function(x,i){return{x:x,i:orders[k].indexOf(x.u)>-1?orders[k].indexOf(x.u):1000+i}}).sort(function(a,b){return a.i-b.i}).map(function(o){return o.x})}
 function save(k,list){orders[k]=list.map(function(x){return x.u});try{localStorage.setItem("lib-order-"+k,JSON.stringify(orders[k]))}catch(e){}}
 function card(x,edit){
   var inner='<div class="meta"><b>'+esc(x.g)+'</b><span>'+esc(x.n)+'</span></div><h2>'+esc(x.t)+'</h2><p>'+esc(x.d)+'</p><div class="tags">'+x.tags.map(function(t){return "<span>"+esc(t)+"</span>"}).join("")+'</div>';
   if(edit)return '<div class="card editing" draggable="true" data-u="'+x.u+'" style="--c:'+x.c+'"><div class="ctl"><span>&#10303; Drag to move</span><span><button type="button" data-mv="-1" aria-label="Move earlier">&#9650;</button><button type="button" data-mv="1" aria-label="Move later">&#9660;</button></span></div>'+inner+'</div>';
-  return '<a class="card" style="--c:'+x.c+'" href="'+x.u+'" target="_blank" rel="noopener">'+inner+'<span class="go">Open '+(x.g==="Tools"?"tool":"guide")+' &rarr;</span></a>'}
+  return '<a class="card" style="--c:'+x.c+'" href="'+x.u+'" target="_blank" rel="noopener">'+inner+'<span class="go">Open '+(x.g==="Tools"?"tool":x.g==="Readings"?"reading":"guide")+' &rarr;</span></a>'}
 function render(){
   var s=q.value.trim().toLowerCase();
   function hit(x){return !s||(x.t+" "+x.d+" "+x.tags.join(" ")+" "+x.g).toLowerCase().indexOf(s)>-1}
   var g=ordered("guides").filter(function(x){return ed.guides||((cat==="All"||x.g===cat)&&hit(x))});
   var t=ordered("tools").filter(function(x){return ed.tools||hit(x)});
-  grid.innerHTML=g.map(function(x){return card(x,ed.guides)}).join("");tgrid.innerHTML=t.map(function(x){return card(x,ed.tools)}).join("");
+  var r=ordered("readings").filter(function(x){return ed.readings||hit(x)});
+  grid.innerHTML=g.map(function(x){return card(x,ed.guides)}).join("");tgrid.innerHTML=t.map(function(x){return card(x,ed.tools)}).join("");rgrid.innerHTML=r.map(function(x){return card(x,ed.readings)}).join("");
+  document.getElementById("rcount").textContent=r.length+(r.length===1?" reading":" readings");
+  document.getElementById("rempty").style.display=r.length?"none":"block";
   document.getElementById("gcount").textContent=g.length+(g.length===1?" guide":" guides");
   document.getElementById("tcount").textContent=t.length+(t.length===1?" tool":" tools");
   document.getElementById("gempty").style.display=g.length?"none":"block";
   document.getElementById("tempty").style.display=t.length?"none":"block";
-  ["guides","tools"].forEach(function(k){
+  ["readings","guides","tools"].forEach(function(k){
     document.querySelector('[data-edit="'+k+'"]').textContent=ed[k]?"Done":"Rearrange";
     document.querySelector('[data-edit="'+k+'"]').setAttribute("aria-pressed",ed[k]);
     document.querySelector('[data-reset="'+k+'"]').hidden=!ed[k];
@@ -150,10 +162,10 @@ function move(k,u,to){var l=ordered(k),i=l.findIndex(function(x){return x.u===u}
 document.addEventListener("click",function(e){
   var b=e.target.closest("[data-edit]");if(b){ed[b.dataset.edit]=!ed[b.dataset.edit];render();return}
   b=e.target.closest("[data-reset]");if(b){var k=b.dataset.reset;orders[k]=[];try{localStorage.removeItem("lib-order-"+k)}catch(x){}render();return}
-  b=e.target.closest("[data-mv]");if(b){var c=b.closest(".card"),k=c.parentNode===tgrid?"tools":"guides",i=ordered(k).findIndex(function(x){return x.u===c.dataset.u});move(k,c.dataset.u,i+parseInt(b.dataset.mv,10))}
+  b=e.target.closest("[data-mv]");if(b){var c=b.closest(".card"),k=c.parentNode===tgrid?"tools":c.parentNode===rgrid?"readings":"guides",i=ordered(k).findIndex(function(x){return x.u===c.dataset.u});move(k,c.dataset.u,i+parseInt(b.dataset.mv,10))}
 });
 var drag=null;
-[grid,tgrid].forEach(function(gr){var k=gr===tgrid?"tools":"guides";
+[rgrid,grid,tgrid].forEach(function(gr){var k=gr===tgrid?"tools":gr===rgrid?"readings":"guides";
   gr.addEventListener("dragstart",function(e){var c=e.target.closest(".card.editing");if(!c)return;drag=c.dataset.u;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",drag)}catch(x){}});
   gr.addEventListener("dragover",function(e){if(!drag)return;e.preventDefault();[].forEach.call(gr.querySelectorAll(".over"),function(n){n.classList.remove("over")});var c=e.target.closest(".card.editing");if(c&&c.dataset.u!==drag)c.classList.add("over")});
   gr.addEventListener("drop",function(e){e.preventDefault();var c=e.target.closest(".card.editing");if(c&&drag&&c.dataset.u!==drag){var to=ordered(k).findIndex(function(x){return x.u===c.dataset.u});move(k,drag,to)}drag=null});
@@ -169,7 +181,7 @@ function renderResume(){
   var cur=guides.filter(function(x){return x.u===l.u})[0]||l;
   box.hidden=false;box.style.setProperty("--c",cur.c);
   document.getElementById("rtitle").textContent=cur.t;
-  document.getElementById("rmeta").textContent=(cur.g==="Tools"?"Tool":"Study guide")+" · opened "+ago(l.at);
+  document.getElementById("rmeta").textContent=(cur.g==="Tools"?"Tool":cur.g==="Readings"?"Reading":"Study guide")+" · opened "+ago(l.at);
   document.getElementById("rgo").href=cur.u;
 }
 function track(e){
