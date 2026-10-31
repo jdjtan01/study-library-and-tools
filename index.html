@@ -46,6 +46,12 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
 .secsub{margin:0 0 16px;color:var(--muted)}
 .toolsec{margin-top:44px;padding:22px;border:1px dashed var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface) 55%,transparent)}
 #guides,#tools{scroll-margin-top:70px}
+.hact{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.hact .chip{padding:4px 12px;font-size:13px}
+.hint{margin:0 0 12px;color:var(--accent);font-size:14px}
+.card.editing{cursor:grab;border-style:dashed;border-top-style:solid}.card.editing:active{cursor:grabbing}.card.dragging{opacity:.4}.card.over{outline:2px dashed var(--c);outline-offset:3px}
+.ctl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:13px}
+.ctl button{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;width:34px;height:30px;cursor:pointer;margin-left:4px}
+.ctl button:hover{border-color:var(--c)}
 </style>
 </head>
 <body>
@@ -60,13 +66,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
   <p class="sub">Six study guides on power systems, substations, the Philippine electricity market, AI and a general encyclopedia, plus three browser tools for CAD drawings, PDFs and Microsoft Project files. Everything opens in its own tab.</p>
   <nav class="jump"><a href="#guides">Study guides</a><a href="#tools">Tools</a></nav>
   <section id="guides">
-    <div class="sechead"><h2>Study guides</h2><span id="gcount"></span></div>
+    <div class="sechead"><h2>Study guides</h2><span class="hact"><span id="gcount"></span><button class="chip" type="button" data-edit="guides">Rearrange</button><button class="chip" type="button" data-reset="guides" hidden>Reset order</button></span></div>
+    <p class="hint" id="hint-guides" hidden>Drag cards to reorder, or use the arrows. Saved in this browser.</p>
     <div class="chips" id="chips"></div>
     <div class="grid" id="grid"></div>
     <p class="empty" id="gempty">No study guides match.</p>
   </section>
   <section id="tools" class="toolsec">
-    <div class="sechead"><h2>Tools</h2><span id="tcount"></span></div>
+    <div class="sechead"><h2>Tools</h2><span class="hact"><span id="tcount"></span><button class="chip" type="button" data-edit="tools">Rearrange</button><button class="chip" type="button" data-reset="tools" hidden>Reset order</button></span></div>
+    <p class="hint" id="hint-tools" hidden>Drag cards to reorder, or use the arrows. Saved in this browser.</p>
     <p class="secsub">Small apps that run in your browser. They open in their own tab.</p>
     <div class="grid" id="tgrid"></div>
     <p class="empty" id="tempty">No tools match.</p>
@@ -80,7 +88,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40p
     </ol>
   </section>
 </main>
-<footer>Add a guide or tool by adding one entry to the <code>guides</code> list in this file's script.</footer>
+<footer>New guides and tools: add one entry to the <code>guides</code> list in this file's script (use <code>g:"Tools"</code> for tools). Anything new appears at the end of its section until you rearrange it.</footer>
 <script>
 var guides=[
 {t:"The Electrical Engineer’s Encyclopedia",u:"https://jdjtan01.github.io/electrical-engineering-study-guide/",c:"#ff9a4d",g:"Power",n:"17 chapters",d:"Plain-English web book on circuits, machines, power systems, protection, electronics, control, safety and trivia, with diagrams and worked examples.",tags:["Fundamentals","Diagrams","Quiz"]},
@@ -98,18 +106,46 @@ var cats=["All"].concat(guides.filter(function(x){return x.g!=="Tools"}).map(fun
 var chips=document.getElementById("chips");
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 cats.forEach(function(c){var b=document.createElement("button");b.className="chip";b.type="button";b.textContent=c;b.setAttribute("aria-pressed",c===cat);b.onclick=function(){cat=c;[].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed",x.textContent===cat)});render()};chips.appendChild(b)});
-function card(x){return '<a class="card" style="--c:'+x.c+'" href="'+x.u+'" target="_blank" rel="noopener"><div class="meta"><b>'+esc(x.g)+'</b><span>'+esc(x.n)+'</span></div><h2>'+esc(x.t)+'</h2><p>'+esc(x.d)+'</p><div class="tags">'+x.tags.map(function(t){return "<span>"+esc(t)+"</span>"}).join("")+'</div><span class="go">Open '+(x.g==="Tools"?"tool":"guide")+' &rarr;</span></a>'}
+var ed={guides:false,tools:false},orders={guides:[],tools:[]};
+try{["guides","tools"].forEach(function(k){var v=JSON.parse(localStorage.getItem("lib-order-"+k)||"[]");if(Array.isArray(v))orders[k]=v})}catch(e){}
+function keyOf(x){return x.g==="Tools"?"tools":"guides"}
+function ordered(k){var base=guides.filter(function(x){return keyOf(x)===k});
+  return base.map(function(x,i){return{x:x,i:orders[k].indexOf(x.u)>-1?orders[k].indexOf(x.u):1000+i}}).sort(function(a,b){return a.i-b.i}).map(function(o){return o.x})}
+function save(k,list){orders[k]=list.map(function(x){return x.u});try{localStorage.setItem("lib-order-"+k,JSON.stringify(orders[k]))}catch(e){}}
+function card(x,edit){
+  var inner='<div class="meta"><b>'+esc(x.g)+'</b><span>'+esc(x.n)+'</span></div><h2>'+esc(x.t)+'</h2><p>'+esc(x.d)+'</p><div class="tags">'+x.tags.map(function(t){return "<span>"+esc(t)+"</span>"}).join("")+'</div>';
+  if(edit)return '<div class="card editing" draggable="true" data-u="'+x.u+'" style="--c:'+x.c+'"><div class="ctl"><span>&#10303; Drag to move</span><span><button type="button" data-mv="-1" aria-label="Move earlier">&#9650;</button><button type="button" data-mv="1" aria-label="Move later">&#9660;</button></span></div>'+inner+'</div>';
+  return '<a class="card" style="--c:'+x.c+'" href="'+x.u+'" target="_blank" rel="noopener">'+inner+'<span class="go">Open '+(x.g==="Tools"?"tool":"guide")+' &rarr;</span></a>'}
 function render(){
   var s=q.value.trim().toLowerCase();
   function hit(x){return !s||(x.t+" "+x.d+" "+x.tags.join(" ")+" "+x.g).toLowerCase().indexOf(s)>-1}
-  var g=guides.filter(function(x){return x.g!=="Tools"&&(cat==="All"||x.g===cat)&&hit(x)});
-  var t=guides.filter(function(x){return x.g==="Tools"&&hit(x)});
-  grid.innerHTML=g.map(card).join("");tgrid.innerHTML=t.map(card).join("");
+  var g=ordered("guides").filter(function(x){return ed.guides||((cat==="All"||x.g===cat)&&hit(x))});
+  var t=ordered("tools").filter(function(x){return ed.tools||hit(x)});
+  grid.innerHTML=g.map(function(x){return card(x,ed.guides)}).join("");tgrid.innerHTML=t.map(function(x){return card(x,ed.tools)}).join("");
   document.getElementById("gcount").textContent=g.length+(g.length===1?" guide":" guides");
   document.getElementById("tcount").textContent=t.length+(t.length===1?" tool":" tools");
   document.getElementById("gempty").style.display=g.length?"none":"block";
   document.getElementById("tempty").style.display=t.length?"none":"block";
+  ["guides","tools"].forEach(function(k){
+    document.querySelector('[data-edit="'+k+'"]').textContent=ed[k]?"Done":"Rearrange";
+    document.querySelector('[data-edit="'+k+'"]').setAttribute("aria-pressed",ed[k]);
+    document.querySelector('[data-reset="'+k+'"]').hidden=!ed[k];
+    document.getElementById("hint-"+k).hidden=!ed[k];
+  });
 }
+function move(k,u,to){var l=ordered(k),i=l.findIndex(function(x){return x.u===u});if(i<0||to<0||to>=l.length)return;var it=l.splice(i,1)[0];l.splice(to,0,it);save(k,l);render()}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-edit]");if(b){ed[b.dataset.edit]=!ed[b.dataset.edit];render();return}
+  b=e.target.closest("[data-reset]");if(b){var k=b.dataset.reset;orders[k]=[];try{localStorage.removeItem("lib-order-"+k)}catch(x){}render();return}
+  b=e.target.closest("[data-mv]");if(b){var c=b.closest(".card"),k=c.parentNode===tgrid?"tools":"guides",i=ordered(k).findIndex(function(x){return x.u===c.dataset.u});move(k,c.dataset.u,i+parseInt(b.dataset.mv,10))}
+});
+var drag=null;
+[grid,tgrid].forEach(function(gr){var k=gr===tgrid?"tools":"guides";
+  gr.addEventListener("dragstart",function(e){var c=e.target.closest(".card.editing");if(!c)return;drag=c.dataset.u;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",drag)}catch(x){}});
+  gr.addEventListener("dragover",function(e){if(!drag)return;e.preventDefault();[].forEach.call(gr.querySelectorAll(".over"),function(n){n.classList.remove("over")});var c=e.target.closest(".card.editing");if(c&&c.dataset.u!==drag)c.classList.add("over")});
+  gr.addEventListener("drop",function(e){e.preventDefault();var c=e.target.closest(".card.editing");if(c&&drag&&c.dataset.u!==drag){var to=ordered(k).findIndex(function(x){return x.u===c.dataset.u});move(k,drag,to)}drag=null});
+  gr.addEventListener("dragend",function(){drag=null;render()});
+});
 q.addEventListener("input",render);
 document.addEventListener("keydown",function(e){if(e.key==="/"&&document.activeElement!==q){e.preventDefault();q.focus()}});
 document.getElementById("theme").onclick=function(){
